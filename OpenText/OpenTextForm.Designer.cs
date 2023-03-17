@@ -39,32 +39,40 @@
             this.tsbFileInfo = new System.Windows.Forms.ToolStripMenuItem();
             this.btTextStyle = new System.Windows.Forms.ToolStripDropDownButton();
             this.tsbChangeFont = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsbShowLineNumber = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.btAbout = new System.Windows.Forms.ToolStripButton();
             this.tsBottomMenu = new System.Windows.Forms.ToolStrip();
             this.tslCurrentFile = new System.Windows.Forms.ToolStripLabel();
-            this.feedbackTimer = new System.Windows.Forms.Timer(this.components);
             this.feedbackLabel = new System.Windows.Forms.ToolStripLabel();
+            this.feedbackTimer = new System.Windows.Forms.Timer(this.components);
+            this.LineNumberTextBox = new System.Windows.Forms.RichTextBox();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.tsbDarkMode = new System.Windows.Forms.ToolStripMenuItem();
             this.tsTopMenu.SuspendLayout();
             this.tsBottomMenu.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // txtDocument
             // 
-            this.txtDocument.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtDocument.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.txtDocument.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtDocument.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtDocument.Location = new System.Drawing.Point(0, 31);
+            this.txtDocument.Location = new System.Drawing.Point(38, 3);
             this.txtDocument.Name = "txtDocument";
-            this.txtDocument.Size = new System.Drawing.Size(1184, 573);
+            this.txtDocument.Size = new System.Drawing.Size(1143, 580);
             this.txtDocument.TabIndex = 0;
             this.txtDocument.Text = "";
+            this.txtDocument.SelectionChanged += new System.EventHandler(this.txtDocument_SelectionChanged);
+            this.txtDocument.VScroll += new System.EventHandler(this.txtDocument_VScroll);
+            this.txtDocument.FontChanged += new System.EventHandler(this.txtDocument_FontChanged);
+            this.txtDocument.TextChanged += new System.EventHandler(this.txtDocument_TextChanged);
             this.txtDocument.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtDocument_KeyDown);
             // 
             // tsTopMenu
             // 
+            this.tsTopMenu.BackColor = System.Drawing.SystemColors.Control;
             this.tsTopMenu.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.tsTopMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btFile,
@@ -79,6 +87,8 @@
             // 
             // btFile
             // 
+            this.btFile.BackColor = System.Drawing.SystemColors.Control;
+            this.btFile.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.btFile.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.btFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsbSave,
@@ -121,13 +131,16 @@
             // 
             // btTextStyle
             // 
+            this.btTextStyle.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.btTextStyle.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.btTextStyle.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tsbChangeFont});
+            this.tsbChangeFont,
+            this.tsbShowLineNumber,
+            this.tsbDarkMode});
             this.btTextStyle.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btTextStyle.Name = "btTextStyle";
-            this.btTextStyle.Size = new System.Drawing.Size(69, 22);
-            this.btTextStyle.Text = "Text Style";
+            this.btTextStyle.Size = new System.Drawing.Size(40, 22);
+            this.btTextStyle.Text = "Edit";
             this.btTextStyle.ToolTipText = "Change the style of your text";
             // 
             // tsbChangeFont
@@ -137,6 +150,16 @@
             this.tsbChangeFont.Text = "Change font...";
             this.tsbChangeFont.Click += new System.EventHandler(this.tsbChangeFont_Click);
             // 
+            // tsbShowLineNumber
+            // 
+            this.tsbShowLineNumber.Checked = true;
+            this.tsbShowLineNumber.CheckOnClick = true;
+            this.tsbShowLineNumber.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.tsbShowLineNumber.Name = "tsbShowLineNumber";
+            this.tsbShowLineNumber.Size = new System.Drawing.Size(180, 22);
+            this.tsbShowLineNumber.Text = "Show line number";
+            this.tsbShowLineNumber.CheckedChanged += new System.EventHandler(this.tsbShowLineNumber_CheckedChanged);
+            // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
@@ -144,6 +167,7 @@
             // 
             // btAbout
             // 
+            this.btAbout.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.btAbout.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.btAbout.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btAbout.Name = "btAbout";
@@ -171,10 +195,6 @@
             this.tslCurrentFile.Size = new System.Drawing.Size(69, 22);
             this.tslCurrentFile.Text = "Current file:";
             // 
-            // feedbackTimer
-            // 
-            this.feedbackTimer.Tick += new System.EventHandler(this.feedbackTimer_Tick);
-            // 
             // feedbackLabel
             // 
             this.feedbackLabel.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
@@ -183,29 +203,70 @@
             this.feedbackLabel.Text = "Feedback Label";
             this.feedbackLabel.Visible = false;
             // 
+            // LineNumberTextBox
+            // 
+            this.LineNumberTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.LineNumberTextBox.Cursor = System.Windows.Forms.Cursors.Default;
+            this.LineNumberTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.LineNumberTextBox.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LineNumberTextBox.Location = new System.Drawing.Point(3, 3);
+            this.LineNumberTextBox.Name = "LineNumberTextBox";
+            this.LineNumberTextBox.ReadOnly = true;
+            this.LineNumberTextBox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
+            this.LineNumberTextBox.Size = new System.Drawing.Size(29, 580);
+            this.LineNumberTextBox.TabIndex = 3;
+            this.LineNumberTextBox.Text = "";
+            this.LineNumberTextBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LineNumberTextBox_MouseDown);
+            // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.BackColor = System.Drawing.Color.Transparent;
+            this.tableLayoutPanel1.ColumnCount = 2;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 3F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 97F));
+            this.tableLayoutPanel1.Controls.Add(this.txtDocument, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this.LineNumberTextBox, 0, 0);
+            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 25);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 1;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1184, 586);
+            this.tableLayoutPanel1.TabIndex = 4;
+            // 
+            // tsbDarkMode
+            // 
+            this.tsbDarkMode.CheckOnClick = true;
+            this.tsbDarkMode.Name = "tsbDarkMode";
+            this.tsbDarkMode.Size = new System.Drawing.Size(180, 22);
+            this.tsbDarkMode.Text = "Dark mode";
+            this.tsbDarkMode.CheckedChanged += new System.EventHandler(this.tsbDarkMode_CheckedChanged);
+            // 
             // OpenText
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1184, 636);
+            this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.tsBottomMenu);
             this.Controls.Add(this.tsTopMenu);
-            this.Controls.Add(this.txtDocument);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "OpenText";
             this.Text = "OpenText";
+            this.Load += new System.EventHandler(this.OpenText_Load);
+            this.Resize += new System.EventHandler(this.OpenText_Resize);
             this.tsTopMenu.ResumeLayout(false);
             this.tsTopMenu.PerformLayout();
             this.tsBottomMenu.ResumeLayout(false);
             this.tsBottomMenu.PerformLayout();
+            this.tableLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.RichTextBox txtDocument;
         private System.Windows.Forms.ToolStrip tsTopMenu;
         private System.Windows.Forms.ToolStripDropDownButton btFile;
         private System.Windows.Forms.ToolStripMenuItem tsbSave;
@@ -220,6 +281,11 @@
         private System.Windows.Forms.ToolStripMenuItem tsbSaveAs;
         private System.Windows.Forms.Timer feedbackTimer;
         private System.Windows.Forms.ToolStripLabel feedbackLabel;
+        private System.Windows.Forms.RichTextBox txtDocument;
+        private System.Windows.Forms.RichTextBox LineNumberTextBox;
+        private System.Windows.Forms.ToolStripMenuItem tsbShowLineNumber;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.ToolStripMenuItem tsbDarkMode;
     }
 }
 
