@@ -10,15 +10,3 @@ C:\Users\Lucas Tozo\Downloads\OpenText\OpenText\bin\Debug\OpenText.pdb
 C:\Users\Lucas Tozo\Downloads\OpenText\OpenText\obj\Debug\OpenText.exe
 C:\Users\Lucas Tozo\Downloads\OpenText\OpenText\obj\Debug\OpenText.pdb
 C:\Users\Lucas Tozo\Downloads\OpenText\OpenText\obj\Debug\OpenText.AboutBox.resources
-C:\Users\Lucas Tozo\Documents\GitHub\OpenText\OpenText\bin\Debug\OpenText.exe.config
-C:\Users\Lucas Tozo\Documents\GitHub\OpenText\OpenText\bin\Debug\OpenText.exe
-C:\Users\Lucas Tozo\Documents\GitHub\OpenText\OpenText\bin\Debug\OpenText.pdb
-C:\Users\Lucas Tozo\Documents\GitHub\OpenText\OpenText\obj\Debug\OpenText.csproj.AssemblyReference.cache
-C:\Users\Lucas Tozo\Documents\GitHub\OpenText\OpenText\obj\Debug\OpenText.csproj.SuggestedBindingRedirects.cache
-C:\Users\Lucas Tozo\Documents\GitHub\OpenText\OpenText\obj\Debug\OpenText.AboutBox.resources
-C:\Users\Lucas Tozo\Documents\GitHub\OpenText\OpenText\obj\Debug\OpenText.OpenText.resources
-C:\Users\Lucas Tozo\Documents\GitHub\OpenText\OpenText\obj\Debug\OpenText.Properties.Resources.resources
-C:\Users\Lucas Tozo\Documents\GitHub\OpenText\OpenText\obj\Debug\OpenText.csproj.GenerateResource.cache
-C:\Users\Lucas Tozo\Documents\GitHub\OpenText\OpenText\obj\Debug\OpenText.csproj.CoreCompileInputs.cache
-C:\Users\Lucas Tozo\Documents\GitHub\OpenText\OpenText\obj\Debug\OpenText.exe
-C:\Users\Lucas Tozo\Documents\GitHub\OpenText\OpenText\obj\Debug\OpenText.pdb
