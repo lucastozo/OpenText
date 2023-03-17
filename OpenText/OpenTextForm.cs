@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using OpenText.LineCounter;
+using OpenText.Helpers;
 
 namespace OpenText
 {
@@ -16,87 +18,31 @@ namespace OpenText
         public OpenText()
         {
             InitializeComponent();
-            LoadFile();
-            feedbackTimer = new Timer();
-            feedbackTimer.Interval = 3000;
-            feedbackTimer.Tick += feedbackTimer_Tick;
-        }
-
-        private string currentFilePath = null, currentFile = "no file is open.";
-
-        private void LoadFile()
-        {
-            tslCurrentFile.Text = $"Current file: {currentFile}";
+            FileManagement.LoadFile(tslCurrentFile);
         }
 
         private void tsbSave_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(currentFilePath))
-            {
-                File.WriteAllText(currentFilePath, txtDocument.Text);
-                ShowFeedbackMessage($"{currentFile} was saved.");
-            }
-            else
-            {
-                tsbSaveAs_Click(sender, e);
-            }
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            FileManagement.SaveFile(saveFileDialog, txtDocument, feedbackLabel, feedbackTimer, tslCurrentFile);
         }
 
         private void tsbSaveAs_Click(object sender, EventArgs e)
         {
-            using (SaveFileDialog saveFileDialog = new SaveFileDialog())
-            {
-                saveFileDialog.Filter = "Text files (*.txt)|*.txt";
-                saveFileDialog.Title = "Save document as...";
-
-                if (saveFileDialog.ShowDialog() == DialogResult.OK)
-                {
-                    currentFilePath = saveFileDialog.FileName;
-                    File.WriteAllText(currentFilePath, txtDocument.Text);
-                }
-            }
-
-            currentFile = Path.GetFileNameWithoutExtension(currentFilePath);
-            ShowFeedbackMessage($"{currentFile} was saved.");
-            LoadFile();
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            FileManagement.SaveAsFile(saveFileDialog, txtDocument, feedbackLabel, feedbackTimer, tslCurrentFile);
         }
 
         private void tsbOpen_Click(object sender, EventArgs e)
         {
-            using (OpenFileDialog openFileDialog = new OpenFileDialog())
-            {
-                openFileDialog.Filter = "Text files (*.txt)|*.txt";
-                openFileDialog.Title = "Open document";
-
-                if (openFileDialog.ShowDialog() == DialogResult.OK)
-                {
-                    currentFilePath = openFileDialog.FileName;
-                    txtDocument.Text = File.ReadAllText(currentFilePath);
-                }
-            }
-
-            currentFile = Path.GetFileNameWithoutExtension(currentFilePath);
-            ShowFeedbackMessage($"{currentFile} was opened.");
-            LoadFile();
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            FileManagement.OpenFile(openFileDialog, txtDocument, feedbackLabel, feedbackTimer, tslCurrentFile);
         }
 
         private void tsbFileInfo_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(currentFilePath))
-            {
-                MessageBox.Show("File not loaded! Please load a file before checking file info.", "Error");
-                return;
-            }
-
-            FileInfo fileInfo = new FileInfo(currentFilePath);
-            string[] lines = File.ReadAllLines(currentFilePath);
-
-            int wordCount = lines.SelectMany(line => line.Split(new char[] { ' ', '.', ',', ';', ':', '-', '_', '/', '\\', '[', ']', '(', ')', '{', '}', '<', '>', '*', '+', '=', '|', '!', '?', '@', '#', '$', '%', '^', '&', '*', '"', '\'', '`', '~', '\t' }, StringSplitOptions.RemoveEmptyEntries)).Count();
-            int lineCount = lines.Length;
-            int charCount = lines.Sum(line => line.Length);
-
-            string message = String.Format("File name: {0}\nWords: {1}\nLines: {2}\nCharacters: {3}\nFile size: {4} bytes", fileInfo.Name, wordCount, lineCount, charCount, fileInfo.Length);
-            MessageBox.Show(message, "File info", MessageBoxButtons.OK);
+            string fileInfoMessage = FileManagement.GetFileInfo(FileManagement.currentFilePath);
+            MessageBox.Show(fileInfoMessage, "File info", MessageBoxButtons.OK);
         }
 
         private void tsbChangeFont_Click(object sender, EventArgs e)
@@ -116,37 +62,79 @@ namespace OpenText
             aboutBox.ShowDialog();
         }
 
+        //SHORTCUTS
         private void txtDocument_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
+            //CTRL+S
+            if (e.Control && e.KeyCode == Keys.S)
             {
-                if (txtDocument.Text == "+lorem")
-                {
-                    txtDocument.Text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed interdum tellus ut libero suscipit dignissim. Nulla ac arcu nec turpis tristique sagittis vel vel eros. Nam bibendum magna vitae elit venenatis ultricies. Nam sit amet leo nibh. Integer sodales luctus ante, et volutpat urna malesuada et. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Etiam pulvinar, velit non bibendum luctus, magna nibh fringilla nisl, ac sagittis risus urna euismod risus. Suspendisse gravida euismod libero sed posuere. Aenean placerat, est eget consequat blandit, nisl metus ultricies odio, quis volutpat sapien nulla quis odio. Pellentesque laoreet erat quis ante lacinia, ac pulvinar odio auctor. Proin nec eros iaculis, laoreet justo at, posuere nunc.";
+                SaveFileDialog saveFileDialog = new SaveFileDialog();
+                Shortcuts.SaveShortcut(e, saveFileDialog, txtDocument, feedbackLabel, feedbackTimer, tslCurrentFile);
+            }
 
-                    // Move the cursor to the end of the text
-                    txtDocument.SelectionStart = txtDocument.Text.Length;
-                    txtDocument.ScrollToCaret();
-
-                    // Prevent a new line from being added
-                    e.SuppressKeyPress = true;
-                }
+            if((e.KeyCode == Keys.Enter) && (txtDocument.Text == "+lorem"))
+            {
+                Shortcuts.LoremGenerate(e, txtDocument);
             }
         }
 
-        private void feedbackTimer_Tick(object sender, EventArgs e)
+        //CODE BELOW IS ABOUT LINE NUMBER COUNTER (Helpers/LineCounter.cs)
+        public int getWidth()
         {
-            feedbackLabel.Text = "";
-            feedbackLabel.Visible = false;
-            feedbackTimer.Stop();
+            return LineCounter.LineCounter.getWidth(txtDocument);
         }
 
-        private void ShowFeedbackMessage(string message)
+        public void AddLineNumbers()
         {
-            feedbackLabel.Text = message;
-            feedbackLabel.Visible = true;
-            feedbackTimer.Start();
+            LineCounter.LineCounter.AddLineNumbers(txtDocument, LineNumberTextBox, this);
         }
+
+        private void OpenText_Load(object sender, EventArgs e)
+        {
+            LineCounter.LineCounter.OpenText_Load(txtDocument, LineNumberTextBox, this);
+        }
+
+        private void OpenText_Resize(object sender, EventArgs e)
+        {
+            LineCounter.LineCounter.OpenText_Resize(txtDocument, LineNumberTextBox, this);
+        }
+
+        private void txtDocument_SelectionChanged(object sender, EventArgs e)
+        {
+            LineCounter.LineCounter.txtDocument_SelectionChanged(txtDocument, LineNumberTextBox, this);
+        }
+        
+        private void txtDocument_VScroll(object sender, EventArgs e)
+        {
+            LineCounter.LineCounter.txtDocument_VScroll(txtDocument, LineNumberTextBox, this);
+        }
+
+        private void txtDocument_TextChanged(object sender, EventArgs e)
+        {
+            LineCounter.LineCounter.txtDocument_TextChanged(txtDocument, LineNumberTextBox, this);
+        }
+
+        private void txtDocument_FontChanged(object sender, EventArgs e)
+        {
+            LineCounter.LineCounter.txtDocument_FontChanged(txtDocument, LineNumberTextBox, this);
+        }
+
+        private void LineNumberTextBox_MouseDown(object sender, MouseEventArgs e)
+        {
+            LineCounter.LineCounter.LineNumberTextBox_MouseDown(txtDocument, LineNumberTextBox);
+        }
+
+        private void tsbShowLineNumber_CheckedChanged(object sender, EventArgs e)
+        {
+            LineCounter.LineCounter.ShowLineCounter(LineNumberTextBox, tableLayoutPanel1);
+        }
+        //CODE ABOVE IS ABOUT LINE NUMBER COUNTER (Helpers/LineCounter.cs)
+
+        private void tsbDarkMode_CheckedChanged(object sender, EventArgs e)
+        {
+            SetDarkMode.DarkMode(txtDocument, LineNumberTextBox, tsBottomMenu);
+        }
+
 
     }
 }

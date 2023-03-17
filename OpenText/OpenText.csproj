@@ -52,6 +52,11 @@
     <Compile Include="AboutBox.Designer.cs">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\SetDarkMode.cs" />
+    <Compile Include="Helpers\FeedbackResponse.cs" />
+    <Compile Include="Helpers\FileManagement.cs" />
+    <Compile Include="Helpers\LineCounter.cs" />
+    <Compile Include="Helpers\Shortcuts.cs" />
     <Compile Include="OpenTextForm.cs">
       <SubType>Form</SubType>
     </Compile>
